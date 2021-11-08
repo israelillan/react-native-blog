@@ -72,8 +72,8 @@ const LoginScreen = props => {
             ));
         } catch (err) {
             setError(err.message);
+            setIsLoading(false);
         }
-        setIsLoading(false);
     };
 
 
@@ -126,11 +126,6 @@ const LoginScreen = props => {
                             onPress={authHandler}
                         />
                     )}
-                </View>
-                <View style={{flex: 1, justifyContent: 'center', alignItems:'center', marginTop:50}}>
-                    <Pressable onPress={() => props.navigation.navigate('Sign up')}>
-                        <Text>Sign Up</Text>
-                    </Pressable>
                 </View>
             </ScrollView>
         </KeyboardAvoidingView>

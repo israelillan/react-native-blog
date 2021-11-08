@@ -5,9 +5,7 @@ import {
     KeyboardAvoidingView,
     Button,
     ActivityIndicator,
-    Alert,
-    Pressable,
-    Text
+    Alert
 } from "react-native";
 import { useDispatch } from 'react-redux';
 
@@ -68,8 +66,8 @@ const SignupScreen = props => {
                 ));
             } catch (err) {
                 setError(err.message);
+                setIsLoading(false);
             }
-            setIsLoading(false);
         }
     };
 
@@ -125,11 +123,6 @@ const SignupScreen = props => {
                     )}
                 </View>
                 <View>
-                </View>
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 50 }}>
-                    <Pressable onPress={() => props.navigation.navigate('Login')}>
-                        <Text>Login</Text>
-                    </Pressable>
                 </View>
             </ScrollView>
         </KeyboardAvoidingView>

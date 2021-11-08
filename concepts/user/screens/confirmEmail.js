@@ -31,7 +31,7 @@ const asyncRefreshUserData = async (user, dispatch, props) => {
     }
 };
 
-const ConfirmEmail = props => {
+const ConfirmEmailScreen = props => {
     const dispatch = useDispatch();
     const user = useSelector(state => state.user);
 
@@ -44,7 +44,7 @@ const ConfirmEmail = props => {
     const [isLoading, setIsLoading] = useState(false);
 
     return (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 50 }}>
             <Text>
                 Verify your emal
             </Text>
@@ -71,4 +71,4 @@ const ConfirmEmail = props => {
     );
 };
 
-export default ConfirmEmail;
+export default ConfirmEmailScreen;

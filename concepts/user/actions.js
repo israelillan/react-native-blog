@@ -20,6 +20,18 @@ const authenticate = (resData) => {
   };
 };
 
+const handleError = (errorResData) => {
+  return dispatch => {
+    const errorId = errorResData.error.message;
+    if (errorId == 'INVALID_ID_TOKEN' || errorId == 'USER_NOT_FOUND') {
+      dispatch({ type: names.LOGOUT });
+    } else {
+      let message = `Something went wrong!: ${errorId}`;
+      throw new Error(message);
+    }
+  };
+};
+
 export const signup = (email, password) => {
   return async dispatch => {
     const response = await fetch(
@@ -39,12 +51,10 @@ export const signup = (email, password) => {
 
     if (!response.ok) {
       const errorResData = await response.json();
-      const errorId = errorResData.error.message;
-      let message = `Something went wrong!: ${errorId}`;
-      if (errorId === 'EMAIL_EXISTS') {
-        message = 'This email exists already!';
-      }
-      throw new Error(message);
+      await dispatch(
+        handleError(errorResData)
+      );
+      return;
     }
 
     const resData = await response.json();
@@ -101,9 +111,10 @@ export const login = (email, password) => {
 
     if (!response.ok) {
       const errorResData = await response.json();
-      const errorId = errorResData.error.message;
-      let message = `Something went wrong!: ${errorId}`;
-      throw new Error(message);
+      await dispatch(
+        handleError(errorResData)
+      );
+      return;
     }
 
     const resData = await response.json();
@@ -147,9 +158,10 @@ export const refreshUserData = (user) => {
 
     if (!response.ok) {
       const errorResData = await response.json();
-      const errorId = errorResData.error.message;
-      let message = `Something went wrong!: ${errorId}`;
-      throw new Error(message);
+      await dispatch(
+        handleError(errorResData)
+      );
+      return;
     }
 
     const resData = await response.json();
@@ -175,3 +187,11 @@ export const tryLogin = () => {
     }
   };
 };
+
+export const logout = () => {
+  return async dispatch => {
+    await AsyncStorage.removeItem(authStorageKey);
+    await AsyncStorage.removeItem(userStorageKey);
+    dispatch({ type: names.LOGOUT });
+  };
+}
