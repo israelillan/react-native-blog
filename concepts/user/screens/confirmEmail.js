@@ -18,21 +18,24 @@ const clearRefreshInterval = () => {
 const asyncRefreshUserData = async (user, dispatch, props) => {
     clearRefreshInterval();
     if (user.isLoggedIn) {
-        if (user.emailVerified) {
-            props.navigation.navigate('Post');
-        } else {
+        if (!user.emailVerified) {
             await dispatch(authActions.refreshUserData(user.authData));
+        } else {
+            timer = setTimeout(() => {
+                asyncRefreshUserData(user, dispatch, props);
+            }, 5000);
         }
-        timer = setTimeout(() => {
-            asyncRefreshUserData(user, dispatch, props);
-        }, 5000);
-    } else {
-        props.navigation.navigate('User');
     }
 };
 
 const ConfirmEmailScreen = props => {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch(); useEffect(() => {
+        props.navigation.setOptions({
+            title: 'Verify email'
+        });
+    }, []);
+
+
     const user = useSelector(state => state.user);
 
     useEffect(() => {
@@ -53,18 +56,36 @@ const ConfirmEmailScreen = props => {
                 {isLoading ? (
                     <ActivityIndicator size="small" color="gray" />
                 ) : (
-                    <Button
-                        title='Resend confirmation email'
-                        onPress={async () => {
-                            setIsLoading(true);
-                            try {
-                                await dispatch(authActions.resendVerificationEmail(user.authData));
-                            }
-                            finally {
-                                setIsLoading(false);
-                            }
-                        }}
-                    />
+                    <View>
+                        <View style={{marginTop: 20}}>
+                            <Button
+                                title='Resend confirmation email'
+                                onPress={async () => {
+                                    setIsLoading(true);
+                                    try {
+                                        await dispatch(authActions.resendVerificationEmail(user.authData));
+                                    }
+                                    finally {
+                                        setIsLoading(false);
+                                    }
+                                }}
+                            />
+                        </View>
+                        <View style={{marginTop: 20}}>
+                            <Button
+                                title='Logout'
+                                onPress={async () => {
+                                    setIsLoading(true);
+                                    try {
+                                        await dispatch(authActions.logout());
+                                    }
+                                    finally {
+                                        setIsLoading(false);
+                                    }
+                                }}
+                            />
+                        </View>
+                    </View>
                 )}
             </View>
         </View>

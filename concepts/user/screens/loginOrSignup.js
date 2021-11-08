@@ -27,4 +27,11 @@ const LoginOrSignUpScreen = props => {
     );
 }
 
+LoginOrSignUpScreen.navigationOptions = () => {
+    console.log(`XXXXXXXXXXXXXXXXXX`);
+    return {
+      title: 'xxx'
+    };
+  };
+
 export default LoginOrSignUpScreen;

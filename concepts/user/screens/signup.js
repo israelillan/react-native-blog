@@ -14,6 +14,12 @@ import Input from "../../../components/UI/input";
 import * as authActions from '../actions';
 
 const SignupScreen = props => {
+    useEffect(() => {
+        props.navigation.setOptions({
+            title: 'Sign up'
+        });
+    }, []);
+
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState();
     const dispatch = useDispatch();

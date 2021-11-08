@@ -13,10 +13,10 @@ const saveAuthDataToStorage = (resData) => {
   );
 };
 
-const authenticate = (resData) => {
+const authenticate = (authData, userData) => {
   return dispatch => {
-    saveAuthDataToStorage(resData);
-    dispatch({ type: names.AUTHENTICATE, authData: resData });
+    saveAuthDataToStorage(authData);
+    dispatch({ type: names.AUTHENTICATE, authData: authData, userData: userData });
   };
 };
 
@@ -117,12 +117,12 @@ export const login = (email, password) => {
       return;
     }
 
-    const resData = await response.json();
+    const authData = await response.json();
     await dispatch(
-      authenticate(resData)
+      authenticate(authData)
     );
     await dispatch(
-      refreshUserData(resData)
+      refreshUserData(authData)
     );
   };
 };
@@ -166,7 +166,7 @@ export const refreshUserData = (user) => {
 
     const resData = await response.json();
     if (resData.users && resData.users.length >= 1) {
-      dispatch(
+      await dispatch(
         userInfo(resData.users[0])
       );
     }
@@ -178,12 +178,21 @@ export const tryLogin = () => {
     const authDataStr = await AsyncStorage.getItem(authStorageKey);
     if (authDataStr) {
       const authData = JSON.parse(authDataStr);
-      dispatch(
-        authenticate(authData)
-      );
-      dispatch(
-        refreshUserData(authData)
-      );
+
+      const userDataStr = await AsyncStorage.getItem(userStorageKey);
+      if (userDataStr) {
+        const userData = JSON.parse(userDataStr);
+        await dispatch(
+          authenticate(authData, userData)
+        );
+      } else {
+        await dispatch(
+          authenticate(authData)
+        );
+        await dispatch(
+          refreshUserData(authData)
+        );
+      }
     }
   };
 };

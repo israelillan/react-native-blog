@@ -40,6 +40,12 @@ const formReducer = (state, action) => {
 };
 
 const LoginScreen = props => {
+    useEffect(() => {
+        props.navigation.setOptions({
+            title: 'Login'
+        });
+    }, []);
+
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState();
     const dispatch = useDispatch();
@@ -131,5 +137,12 @@ const LoginScreen = props => {
         </KeyboardAvoidingView>
     );
 }
+
+LoginScreen.navigationOptions = () => {
+    console.log(`XXXXXXXXXXXXXXXXXX`);
+    return {
+        title: 'xxx'
+    };
+};
 
 export default LoginScreen;

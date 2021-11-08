@@ -7,7 +7,9 @@ export default (state = INTIAL_STATE, action) => {
       return {
         ...state,
         authData: action.authData,
-        isLoggedIn: true
+        userData: action.userData,
+        isLoggedIn: true,
+        emailVerified: !!action.userData && action.userData.emailVerified
       };
     case names.USER_DATA:
       return {
