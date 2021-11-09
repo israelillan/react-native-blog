@@ -39,7 +39,7 @@ const formReducer = (state, action) => {
     return state;
 };
 
-const LoginScreen = props => {
+const Login = props => {
     useEffect(() => {
         props.navigation.setOptions({
             title: 'Login'
@@ -138,11 +138,4 @@ const LoginScreen = props => {
     );
 }
 
-LoginScreen.navigationOptions = () => {
-    console.log(`XXXXXXXXXXXXXXXXXX`);
-    return {
-        title: 'xxx'
-    };
-};
-
-export default LoginScreen;
+export default Login;

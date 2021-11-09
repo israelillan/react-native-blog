@@ -5,16 +5,16 @@ import {
     Pressable
 } from 'react-native';
 
-import SignupScreen from './signup';
-import LoginScreen from './login';
+import Signup from './signup';
+import Login from './login';
 
-const LoginOrSignUpScreen = props => {
+const LoginOrSignUp = props => {
     const [isSignup, setIsSignup] = useState(false);
 
     return (
         <View style={{marginTop: 50}}>
             <View>
-                {isSignup ? (<SignupScreen {...props} />) : (<LoginScreen {...props}  />)}
+                {isSignup ? (<Signup {...props} />) : (<Login {...props}  />)}
             </View>
             <View style={{ alignItems: 'center', marginTop: 50 }}>
                 <Pressable onPress={() => {
@@ -27,11 +27,4 @@ const LoginOrSignUpScreen = props => {
     );
 }
 
-LoginOrSignUpScreen.navigationOptions = () => {
-    console.log(`XXXXXXXXXXXXXXXXXX`);
-    return {
-      title: 'xxx'
-    };
-  };
-
-export default LoginOrSignUpScreen;
+export default LoginOrSignUp;

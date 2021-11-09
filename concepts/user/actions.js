@@ -94,7 +94,7 @@ export const resendVerificationEmail = (authData) => {
 
 export const login = (email, password) => {
   return async dispatch => {
-    const response = await fetch(
+    const autResponse = await fetch(
       `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${api_key}`,
       {
         method: 'POST',
@@ -109,20 +109,39 @@ export const login = (email, password) => {
       }
     );
 
-    if (!response.ok) {
-      const errorResData = await response.json();
+    if (!autResponse.ok) {
+      const errorResData = await autResponse.json();
       await dispatch(
         handleError(errorResData)
       );
       return;
     }
+    const authData = await autResponse.json();
 
-    const authData = await response.json();
-    await dispatch(
-      authenticate(authData)
+    const userDataResponse = await fetch(
+      `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${api_key}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          idToken: authData.idToken
+        })
+      }
     );
+
+    let userData = null;
+    if (userDataResponse.ok) {
+      const resData = await userDataResponse.json();
+      if (resData.users && resData.users.length >= 1) {
+        userData = resData.users[0];
+      }
+    }
+
+
     await dispatch(
-      refreshUserData(authData)
+      authenticate(authData, userData)
     );
   };
 };
@@ -143,7 +162,7 @@ const userInfo = (resData) => {
 
 export const refreshUserData = (user) => {
   return async dispatch => {
-    const response = await fetch(
+    const userDataResponse = await fetch(
       `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${api_key}`,
       {
         method: 'POST',
@@ -156,15 +175,15 @@ export const refreshUserData = (user) => {
       }
     );
 
-    if (!response.ok) {
-      const errorResData = await response.json();
+    if (!userDataResponse.ok) {
+      const errorResData = await userDataResponse.json();
       await dispatch(
         handleError(errorResData)
       );
       return;
     }
 
-    const resData = await response.json();
+    const resData = await userDataResponse.json();
     if (resData.users && resData.users.length >= 1) {
       await dispatch(
         userInfo(resData.users[0])

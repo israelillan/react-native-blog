@@ -9,13 +9,13 @@ export default (state = INTIAL_STATE, action) => {
         authData: action.authData,
         userData: action.userData,
         isLoggedIn: true,
-        emailVerified: !!action.userData && action.userData.emailVerified
+        loggedInAndEmailVerified: !!action.userData && action.userData.emailVerified
       };
     case names.USER_DATA:
       return {
         ...state,
         userData: action.userData,
-        emailVerified: action.userData.emailVerified
+        loggedInAndEmailVerified: action.userData.emailVerified
       };
     case names.LOGOUT:
       return INTIAL_STATE;

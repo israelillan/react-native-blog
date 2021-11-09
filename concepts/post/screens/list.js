@@ -2,18 +2,24 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
     View,
     Text,
-    FlatList,
     Button,
-    Platform,
     ActivityIndicator,
-    StyleSheet
+    StyleSheet,
+    TouchableOpacity
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { HeaderButtons, Item } from 'react-navigation-header-buttons';
+
+import * as navigationNames from '../../../navigation/names';
 
 import * as actions from '../actions'
 
 const PostsListScreen = props => {
+    useEffect(() => {
+        props.navigation.setOptions({
+            title: 'Posts'
+        });
+    }, []);
+
     const [isLoading, setIsLoading] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [error, setError] = useState();
@@ -74,7 +80,12 @@ const PostsListScreen = props => {
     if (!isLoading && posts.length === 0) {
         return (
             <View style={styles.centered}>
-                <Text>No posts found. Maybe start adding some!</Text>
+                <Text>No posts found.</Text>
+                <TouchableOpacity onPress={() => {
+                    props.navigation.navigate(navigationNames.ADD_POSTS);
+                }}>
+                    <Text style={{color: 'blue'}}>Maybe start adding some!</Text>
+                </TouchableOpacity>
             </View>
         );
     }

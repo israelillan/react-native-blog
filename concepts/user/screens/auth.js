@@ -5,8 +5,8 @@ import {
 import { useSelector } from 'react-redux';
 import { StackActions } from '@react-navigation/native';
 
-import ConfirmEmailScreen from './confirmEmail';
-import LoginOrSignUpScreen from './loginOrSignup';
+import ConfirmEmail from '../components/confirmEmail';
+import LoginOrSignUp from '../components/loginOrSignup';
 
 const AuthScreen = (props) => {
   useEffect(() => {
@@ -16,17 +16,16 @@ const AuthScreen = (props) => {
   }, []);
 
   const isLoggedIn = useSelector(state => state.user.isLoggedIn);
-  const emailVerified = useSelector(state => state.user.emailVerified);
+  const loggedInAndEmailVerified = useSelector(state => state.user.loggedInAndEmailVerified);
 
   useEffect(() => {
-    if (isLoggedIn && emailVerified) {
+    if (isLoggedIn && loggedInAndEmailVerified) {
       props.navigation.dispatch(StackActions.pop(1));
     }
-  }, [isLoggedIn, emailVerified]);
+  }, [isLoggedIn, loggedInAndEmailVerified]);
 
 
-  return isLoggedIn ? emailVerified ? <View /> : <ConfirmEmailScreen {...props} /> : <LoginOrSignUpScreen {...props} />;
+  return isLoggedIn ? loggedInAndEmailVerified ? <View /> : <ConfirmEmail {...props} /> : <LoginOrSignUp {...props} />;
 };
-
 
 export default AuthScreen;

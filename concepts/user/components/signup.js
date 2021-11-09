@@ -13,7 +13,7 @@ import Input from "../../../components/UI/input";
 
 import * as authActions from '../actions';
 
-const SignupScreen = props => {
+const Signup = props => {
     useEffect(() => {
         props.navigation.setOptions({
             title: 'Sign up'
@@ -135,4 +135,4 @@ const SignupScreen = props => {
     );
 }
 
-export default SignupScreen;
+export default Signup;

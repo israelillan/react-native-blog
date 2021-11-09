@@ -18,7 +18,7 @@ const clearRefreshInterval = () => {
 const asyncRefreshUserData = async (user, dispatch, props) => {
     clearRefreshInterval();
     if (user.isLoggedIn) {
-        if (!user.emailVerified) {
+        if (!user.loggedInAndEmailVerified) {
             await dispatch(authActions.refreshUserData(user.authData));
         } else {
             timer = setTimeout(() => {
@@ -28,13 +28,12 @@ const asyncRefreshUserData = async (user, dispatch, props) => {
     }
 };
 
-const ConfirmEmailScreen = props => {
+const ConfirmEmail = props => {
     const dispatch = useDispatch(); useEffect(() => {
         props.navigation.setOptions({
             title: 'Verify email'
         });
     }, []);
-
 
     const user = useSelector(state => state.user);
 
@@ -92,4 +91,4 @@ const ConfirmEmailScreen = props => {
     );
 };
 
-export default ConfirmEmailScreen;
+export default ConfirmEmail;

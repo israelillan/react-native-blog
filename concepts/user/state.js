@@ -1,7 +1,7 @@
 const INTIAL_STATE = {
     authData: null,
     isLoggedIn: false,
-    emailVerified: false
-}
+    loggedInAndEmailVerified: false
+};
 
 export default INTIAL_STATE;
