@@ -32,14 +32,35 @@ const PickedImage = props => {
         setPickedImage(image.uri);
         props.onImageTaken(image.uri);
     };
+    const pickImageHandler = async () => {
+        const hasPermission = await verifyPermissions();
+        if (!hasPermission) {
+            return;
+        }
+        const image = await ImagePicker.launchImageLibraryAsync({
+            allowsEditing: true,
+            quality: 0.8
+        });
+
+        setPickedImage(image.uri);
+        props.onImageTaken(image.uri);
+    };
 
     return (
         <View {...props}>
             <ImageBackground style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} source={{ uri: pickedImage }}>
-                <Button
-                    title="Take Image"
-                    onPress={takeImageHandler}
-                />
+                <View>
+                    <Button
+                        title="Take Image"
+                        onPress={takeImageHandler}
+                    />
+                </View>
+                <View style={{marginTop: 10}}>
+                    <Button
+                        title="Choose from gallery"
+                        onPress={pickImageHandler}
+                    />
+                </View>
             </ImageBackground>
         </View>
     );
