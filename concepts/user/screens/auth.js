@@ -15,14 +15,14 @@ const AuthScreen = (props) => {
     });
   }, []);
 
-  const isLoggedIn = useSelector(state => state.user.isLoggedIn);
+  const isLoggedIn = useSelector(state => state.user.loggedIn);
   const loggedInAndEmailVerified = useSelector(state => state.user.loggedInAndEmailVerified);
 
   useEffect(() => {
-    if (isLoggedIn && loggedInAndEmailVerified) {
+    if (loggedInAndEmailVerified) {
       props.navigation.dispatch(StackActions.pop(1));
     }
-  }, [isLoggedIn, loggedInAndEmailVerified]);
+  }, [loggedInAndEmailVerified]);
 
 
   return isLoggedIn ? loggedInAndEmailVerified ? <View /> : <ConfirmEmail {...props} /> : <LoginOrSignUp {...props} />;

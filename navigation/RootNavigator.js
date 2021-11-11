@@ -6,6 +6,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { HeaderButtons, Item, HeaderButton } from 'react-navigation-header-buttons';
 import { MaterialIcons } from '@expo/vector-icons';
 
+import { LogBox } from 'react-native';
+// firebase sets up a long timer
+LogBox.ignoreLogs(['Setting a timer']);
+
 import * as navigationNames from './names';
 
 import * as authActions from '../concepts/user/actions';
@@ -17,10 +21,10 @@ import AddPostScreen from '../concepts/post/screens/add';
 const RootNavigator = ({navigation}) => {
   const dispatch = useDispatch();
   useEffect(() => {
-    async function asyncTryLogin() {
-      await dispatch(authActions.tryLogin());
+    async function asyncWatchUser() {
+      await dispatch(authActions.watchUser());
     }
-    asyncTryLogin();
+    asyncWatchUser();
   }, []);
 
   const loggedInAndEmailVerified = useSelector(state => state.user.loggedInAndEmailVerified);

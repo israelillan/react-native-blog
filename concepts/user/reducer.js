@@ -3,19 +3,11 @@ import INTIAL_STATE from './state'
 
 export default (state = INTIAL_STATE, action) => {
   switch (action.type) {
-    case names.AUTHENTICATE:
-      return {
-        ...state,
-        authData: action.authData,
-        userData: action.userData,
-        isLoggedIn: true,
-        loggedInAndEmailVerified: !!action.userData && action.userData.emailVerified
-      };
     case names.USER_DATA:
       return {
         ...state,
-        userData: action.userData,
-        loggedInAndEmailVerified: action.userData.emailVerified
+        loggedIn: !!action.userData && !action.userData.isAnonymous,
+        loggedInAndEmailVerified: !!action.userData && !action.userData.isAnonymous && action.userData.emailVerified
       };
     case names.LOGOUT:
       return INTIAL_STATE;

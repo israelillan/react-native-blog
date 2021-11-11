@@ -49,7 +49,6 @@ const EditPost = props => {
         inputValidities: updatedValidities,
         inputValues: updatedValues
       };
-      console.log(ret);
       return ret;  
     }, {
     inputValues: {

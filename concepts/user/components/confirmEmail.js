@@ -9,38 +9,33 @@ import {
 import * as authActions from '../actions';
 
 let timer;
-const clearRefreshInterval = () => {
+const clearRefreshTimeout = () => {
     if (timer) {
         clearTimeout(timer);
+        timer = null;
     }
 };
 
-const asyncRefreshUserData = async (user, dispatch, props) => {
-    clearRefreshInterval();
-    if (user.isLoggedIn) {
-        if (!user.loggedInAndEmailVerified) {
-            await dispatch(authActions.refreshUserData(user.authData));
-        } else {
-            timer = setTimeout(() => {
-                asyncRefreshUserData(user, dispatch, props);
-            }, 5000);
-        }
-    }
+const asyncRefreshUserData = async (dispatch, props) => {
+    clearRefreshTimeout();
+    await dispatch(authActions.refreshUserData());
+    timer = setTimeout(() => {
+        asyncRefreshUserData(dispatch, props);
+    }, 5000);
 };
 
 const ConfirmEmail = props => {
-    const dispatch = useDispatch(); useEffect(() => {
+    const dispatch = useDispatch(); 
+    useEffect(() => {
         props.navigation.setOptions({
             title: 'Verify email'
         });
     }, []);
 
-    const user = useSelector(state => state.user);
-
     useEffect(() => {
-        asyncRefreshUserData(user, dispatch, props);
-        return clearRefreshInterval;
-    }, [user]);
+        asyncRefreshUserData(dispatch, props);
+        return clearRefreshTimeout;
+    }, []);
 
 
     const [isLoading, setIsLoading] = useState(false);
@@ -62,7 +57,7 @@ const ConfirmEmail = props => {
                                 onPress={async () => {
                                     setIsLoading(true);
                                     try {
-                                        await dispatch(authActions.resendVerificationEmail(user.authData));
+                                        await dispatch(authActions.resendVerificationEmail());
                                     }
                                     finally {
                                         setIsLoading(false);

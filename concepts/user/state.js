@@ -1,5 +1,4 @@
 const INTIAL_STATE = {
-    authData: null,
     isLoggedIn: false,
     loggedInAndEmailVerified: false
 };
