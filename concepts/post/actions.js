@@ -29,45 +29,6 @@ firebaseDatabase.onChildRemoved(databasePostsRef, (data) => {
 export const fetchPosts = () => {
   return async () => {
     firebaseDatabase.query(databasePostsRef, firebaseDatabase.orderByChild('updateDate'));
-    // const resData = await firebaseDatabase.get(databasePostsRef);
-    // console.log(resData);
-    // const loadedPosts = [];
-    // for (const key in resData) {
-    //   console.log(`key: ${key}`);
-    //   const postData = {
-    //     ...resData[key],
-    //     id: key
-    //   }
-    //   loadedPosts.push(postData);
-    // }
-
-    // console.log(loadedPosts);
-
-    // dispatch({
-    //   type: names.SET_POSTS,
-    //   posts: loadedPosts
-    // });
-    //   const response = await fetch(
-    //     `${database_url}posts.json`
-    //   );
-
-    //   if (!response.ok) {
-    //     throw new Error('Something went wrong!');
-    //   }
-
-    //   const resData = await response.json();
-    //   const loadedPosts = [];
-
-    //   for (const key in resData) {
-    //     loadedPosts.push(
-    //       new Post(
-    //         key,
-    //         resData[key]
-    //       )
-    //     );
-    //   }
-
-    //   dispatch({ type: names.SET_POSTS, posts: loadedPosts });
   };
 };
 

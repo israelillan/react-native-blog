@@ -1,6 +1,8 @@
 import * as names from './names';
 import INTIAL_STATE from './state';
 
+const postCompareFn = (a, b) => a.updateDate < b.updateDate ? 1 : -1;
+
 export default (state = INTIAL_STATE, action) => {
     switch (action.type) {
         case names.ADD_POST:
@@ -8,7 +10,7 @@ export default (state = INTIAL_STATE, action) => {
             if (newPostIndex === -1) {
                 return {
                     ...state,
-                    posts: state.posts.concat(action.post)
+                    posts: state.posts.concat(action.post).sort(postCompareFn)
                 };
             };
             return state;
@@ -19,7 +21,7 @@ export default (state = INTIAL_STATE, action) => {
                 updatedPosts[updatePostIndex] = action.post;
                 return {
                     ...state,
-                    posts: updatedPosts
+                    posts: updatedPosts.sort(postCompareFn)
                 };
             };
             return state;
