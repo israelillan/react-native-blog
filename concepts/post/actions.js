@@ -7,7 +7,8 @@ import store from '../../store';
 import * as names from './names';
 
 const database = firebaseDatabase.getDatabase();
-const databasePostsRef = firebaseDatabase.ref(database, `posts/`);
+const postsCollection = 'posts';
+const databasePostsRef = firebaseDatabase.ref(database, `${postsCollection}/`);
 
 firebaseDatabase.onChildAdded(databasePostsRef, (data) => {
   store.dispatch({
@@ -56,30 +57,34 @@ const uriToBlob = (uri) => {
 
     xhr.send(null);
   });
-}
+};
 
 const getFilenameFromUrl = (url) => {
   return url.split('/').pop().split('#')[0].split('?')[0];
-}
+};
 
 const getExtensionFromFilename = (filename) => {
   return filename.split('.').pop().trim();
-}
+};
+
+const uploadImageToServer = async (imageUrl, user) => {
+  const imageBlob = await uriToBlob(imageUrl);
+
+  const imageFilename = getFilenameFromUrl(imageUrl);
+  const imageExtension = getExtensionFromFilename(imageFilename);
+
+  const imageRef = firebaseStorage.ref(storage, `uploads/${user.id}/${uuid.v4()}.${imageExtension}`);
+  await firebaseStorage.uploadBytes(imageRef, imageBlob, {
+    contentType: `image/${imageExtension}`
+  });
+  return await firebaseStorage.getDownloadURL(imageRef);
+};
 
 export const createPost = (title, description, imageUrl) => {
   return async (_, getState) => {
-    const imageBlob = await uriToBlob(imageUrl);
-
-    const imageFilename = getFilenameFromUrl(imageUrl);
-    const imageExtension = getExtensionFromFilename(imageFilename);
-
     const { user } = getState();
 
-    const imageRef = firebaseStorage.ref(storage, `uploads/${user.id}/${uuid.v4()}.${imageExtension}`);
-    await firebaseStorage.uploadBytes(imageRef, imageBlob, {
-      contentType: `image/${imageExtension}`
-    });
-    const uploadedImageUrl = await firebaseStorage.getDownloadURL(imageRef);
+    const uploadedImageUrl = await uploadImageToServer(imageUrl, user);
 
     const post = {
       author: user.id,
@@ -96,9 +101,28 @@ export const createPost = (title, description, imageUrl) => {
   };
 };
 
+export const updatePost = (post, title, description, imageUrl) => {
+  return async (_, getState) => {
+    const { user } = getState();
+
+    if (imageUrl.startsWith('file://')) {
+      imageUrl = await uploadImageToServer(imageUrl, user);
+    }
+
+    const updates = {
+      [post.id]: {
+        title,
+        description, 
+        imageUrl,
+        updateDate: firebaseDatabase.serverTimestamp()
+      }
+    }
+    await firebaseDatabase.update(databasePostsRef, updates);
+  };
+};
+
 export const deletePost = (post) => {
   return async () => {
-    console.log(post);
     const postRef = firebaseDatabase.ref(database, `posts/${post.id}`);
     await firebaseDatabase.remove(postRef);
   };

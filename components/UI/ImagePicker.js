@@ -4,7 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { ImageBackground } from 'react-native';
 
 const PickedImage = props => {
-    const [pickedImage, setPickedImage] = useState();
+    const [pickedImage, setPickedImage] = useState(props.initialValue);
 
     const verifyPermissions = async () => {
         const result = await ImagePicker.requestMediaLibraryPermissionsAsync();

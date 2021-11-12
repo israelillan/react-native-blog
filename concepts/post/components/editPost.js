@@ -24,10 +24,7 @@ const EditPost = props => {
     }
   }, [error]);
 
-  const postId = props.postId;
-  const editedPost = useSelector(state =>
-    state.post.posts.find(prod => prod.id === postId)
-  );
+  const editedPost = props.post;
   const dispatch = useDispatch();
 
   const [formState, dispatchFormState] = useReducer(
@@ -49,7 +46,7 @@ const EditPost = props => {
         inputValidities: updatedValidities,
         inputValues: updatedValues
       };
-      return ret;  
+      return ret;
     }, {
     inputValues: {
       title: editedPost ? editedPost.title : '',
@@ -86,14 +83,14 @@ const EditPost = props => {
     setIsLoading(true);
     try {
       if (editedPost) {
-        // await dispatch(
-        //   postsActions.updatePost(
-        //     postId,
-        //     formState.inputValues.title,
-        //     formState.inputValues.description,
-        //     formState.inputValues.imageUrl
-        //   )
-        // );
+        await dispatch(
+          postsActions.updatePost(
+            editedPost,
+            formState.inputValues.title,
+            formState.inputValues.description,
+            formState.inputValues.imageUrl
+          )
+        );
       } else {
         await dispatch(
           postsActions.createPost(
@@ -108,7 +105,7 @@ const EditPost = props => {
       setError(err.message);
       setIsLoading(false);
     }
-  }, [dispatch, postId, formState]);
+  }, [dispatch, editedPost, formState]);
 
   useEffect(() => {
     props.navigation.setOptions({
@@ -137,9 +134,11 @@ const EditPost = props => {
     <View>
       <ScrollView>
         <View>
-          <PickedImage style={{height: 200, backgroundColor: '#00000020', borderColor: '#ccc', margin: 10}} onImageTaken={(imagePath) => {
-            inputChangeHandler('imageUrl', imagePath, !!imagePath);
-          }} />
+          <PickedImage style={{ height: 200, backgroundColor: '#00000020', borderColor: '#ccc', margin: 10 }}
+            initialValue={editedPost ? editedPost.imageUrl : null}
+            onImageTaken={(imagePath) => {
+              inputChangeHandler('imageUrl', imagePath, !!imagePath);
+            }} />
           <KeyboardAvoidingView
             behavior="padding"
             keyboardVerticalOffset={0}

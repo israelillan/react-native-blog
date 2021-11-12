@@ -13,18 +13,25 @@ import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 import { StackActions } from '@react-navigation/native';
 
-import * as actions from '../actions'
+import * as actions from '../actions';
+import * as navigationNames from '../../../navigation/names';
 
 const ViewScreen = props => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState();
     useEffect(() => {
         if (error) {
-          Alert.alert('An error occurred!', error, [{ text: 'Okay' }]);
+            Alert.alert('An error occurred!', error, [{ text: 'Okay' }]);
         }
-      }, [error]);
-    
+    }, [error]);
+
     const { post } = props.route.params;
+    useEffect(() => {
+        props.navigation.setOptions({
+            title: post.title
+        });
+    }, []);
+
     const userId = useSelector(state => state.user.id);
 
     const dispatch = useDispatch();
@@ -38,7 +45,7 @@ const ViewScreen = props => {
             props.navigation.dispatch(StackActions.pop(1));
         } catch (err) {
             setError(err.message);
-            setIsLoading(false);      
+            setIsLoading(false);
         }
     }, [dispatch, post, props.navigation]);
 
@@ -52,7 +59,11 @@ const ViewScreen = props => {
 
     const UserControls = !!userId && userId === post.author ? (
         <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'space-between', padding: 10 }}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => {
+                props.navigation.navigate(navigationNames.EDIT_POST, {
+                    post
+                })
+            }}>
                 <MaterialIcons
                     name='edit'
                     size={30}
@@ -101,7 +112,6 @@ const ViewScreen = props => {
                         )
                         }
                     </View>
-                    <Text style={{ fontSize: 20 }}>{post.title}</Text>
                     <Text style={{ margin: 20, backgroundColor: '#ccc', minHeight: 200 }}>{post.description}</Text>
                 </View>
             </ScrollView>
