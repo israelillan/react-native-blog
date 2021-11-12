@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback, useReducer } from 'react';
 import {
   View,
-  Text,
   ScrollView,
   Alert,
   KeyboardAvoidingView,

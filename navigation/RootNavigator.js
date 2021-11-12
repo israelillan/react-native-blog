@@ -17,6 +17,7 @@ import * as authActions from '../concepts/user/actions';
 import AuthScreen from '../concepts/user/screens/auth';
 import PostsListScreen from '../concepts/post/screens/list';
 import AddPostScreen from '../concepts/post/screens/add';
+import ViewPostScreen from '../concepts/post/screens/view';
 
 const RootNavigator = () => {
   const dispatch = useDispatch();
@@ -46,7 +47,8 @@ const RootNavigator = () => {
         )
       }}>
         <Stack.Screen name={navigationNames.POSTS_LIST} component={PostsListScreen} />
-        <Stack.Screen name={navigationNames.ADD_POSTS} component={AddPostScreen} />
+        <Stack.Screen name={navigationNames.ADD_POST} component={AddPostScreen} />
+        <Stack.Screen name={navigationNames.VIEW_POST} component={ViewPostScreen} />
         <Stack.Screen name={navigationNames.AUTH} component={AuthScreen} />
       </Stack.Navigator>
     </NavigationContainer>

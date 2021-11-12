@@ -10,20 +10,27 @@ const database = firebaseDatabase.getDatabase();
 const databasePostsRef = firebaseDatabase.ref(database, `posts/`);
 
 firebaseDatabase.onChildAdded(databasePostsRef, (data) => {
-  store.dispatch({ type: names.ADD_POST, post: {
-    ...data.val(),
-    id: data.key,
-  }});
+  store.dispatch({
+    type: names.ADD_POST, post: {
+      ...data.val(),
+      id: data.key,
+    }
+  });
 });
 firebaseDatabase.onChildChanged(databasePostsRef, (data) => {
-  store.dispatch({ type: names.UPDATE_POST, post: {
-    ...data.val(),
-    id: data.key,
-  }});
+  store.dispatch({
+    type: names.UPDATE_POST, post: {
+      ...data.val(),
+      id: data.key,
+    }
+  });
 });
 firebaseDatabase.onChildRemoved(databasePostsRef, (data) => {
-  // console.log(`onChildRemoved`);
-  // console.log(data);
+  store.dispatch({
+    type: names.DELETE_POST, post: {
+      id: data.key,
+    }
+  });
 });
 
 export const fetchPosts = () => {
@@ -60,7 +67,7 @@ const getExtensionFromFilename = (filename) => {
 }
 
 export const createPost = (title, description, imageUrl) => {
-  return async (dispatch, getState) => {
+  return async (_, getState) => {
     const imageBlob = await uriToBlob(imageUrl);
 
     const imageFilename = getFilenameFromUrl(imageUrl);
@@ -86,5 +93,13 @@ export const createPost = (title, description, imageUrl) => {
     post.id = id;
     post.creationDate = Date.now();
     post.updateDate = Date.now();
+  };
+};
+
+export const deletePost = (post) => {
+  return async () => {
+    console.log(post);
+    const postRef = firebaseDatabase.ref(database, `posts/${post.id}`);
+    await firebaseDatabase.remove(postRef);
   };
 };

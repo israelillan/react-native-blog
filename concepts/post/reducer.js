@@ -1,7 +1,7 @@
 import * as names from './names';
 import INTIAL_STATE from './state';
 
-const postCompareFn = (a, b) => a.updateDate < b.updateDate ? 1 : -1;
+const postCompareFn = (a, b) => b.updateDate - a.updateDate;
 
 export default (state = INTIAL_STATE, action) => {
     switch (action.type) {
@@ -25,6 +25,13 @@ export default (state = INTIAL_STATE, action) => {
                 };
             };
             return state;
+        case names.DELETE_POST:
+            return {
+                ...state,
+                posts: state.posts.filter(
+                    p => p.id !== action.post.id
+                )
+            };
         default:
             return state;
     }

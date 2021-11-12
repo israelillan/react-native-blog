@@ -74,7 +74,7 @@ const PostsListScreen = props => {
         return (
             <View style={styles.centered}>
                 <Text>No posts found.</Text>
-                <TouchableOpacity onPress={() => props.navigation.navigate(navigationNames.ADD_POSTS)}>
+                <TouchableOpacity onPress={() => props.navigation.navigate(navigationNames.ADD_POST)}>
                     <Text style={{ color: 'blue' }}>Maybe start adding some!</Text>
                 </TouchableOpacity>
             </View>
@@ -89,12 +89,17 @@ const PostsListScreen = props => {
                 data={posts}
                 keyExtractor={item => item.id}
                 renderItem={itemData => (
-                    <PostItem item={itemData.item} />
+                    <PostItem item={itemData.item}
+                        onTouch={(item) => {
+                            props.navigation.navigate(navigationNames.VIEW_POST, {
+                                post: item
+                            });
+                        }} />
                 )}
             />
             <TouchableOpacity
                 activeOpacity={0.7}
-                onPress={() => props.navigation.navigate(navigationNames.ADD_POSTS)}
+                onPress={() => props.navigation.navigate(navigationNames.ADD_POST)}
                 style={styles.touchableOpacityStyle}>
                 <MaterialIcons
                     name='add'
