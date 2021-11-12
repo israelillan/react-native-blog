@@ -12,8 +12,9 @@ import { HeaderButtons, Item, HeaderButton } from 'react-navigation-header-butto
 import { MaterialIcons } from '@expo/vector-icons';
 
 import PickedImage from '../../../components/UI/ImagePicker';
-
 import Input from '../../../components/UI/input';
+
+import * as postsActions from '../actions';
 
 const EditPost = props => {
   const [isLoading, setIsLoading] = useState(false);
@@ -26,7 +27,7 @@ const EditPost = props => {
 
   const postId = props.postId;
   const editedPost = useSelector(state =>
-    state.post.userPosts.find(prod => prod.id === postId)
+    state.post.posts.find(prod => prod.id === postId)
   );
   const dispatch = useDispatch();
 
@@ -76,7 +77,6 @@ const EditPost = props => {
   );
 
   const submitHandler = useCallback(async () => {
-    console.log(`formState.formIsValid: ${formState.formIsValid}`);
     if (!formState.formIsValid) {
       Alert.alert('Wrong input!', 'Please check the errors in the form.', [
         { text: 'Okay' }
@@ -86,31 +86,29 @@ const EditPost = props => {
     setError(null);
     setIsLoading(true);
     try {
-      console.log(formState.inputValues);
-      // if (editedPost) {
-      //   await dispatch(
-      //     postsActions.updatePost(
-      //       postId,
-      //       formState.inputValues.title,
-      //       formState.inputValues.description,
-      //       formState.inputValues.imageUrl
-      //     )
-      //   );
-      // } else {
-      //   await dispatch(
-      //     postsActions.createPost(
-      //       formState.inputValues.title,
-      //       formState.inputValues.description,
-      //       formState.inputValues.imageUrl
-      //     )
-      //   );
-      // }
-      // props.navigation.goBack();
+      if (editedPost) {
+        // await dispatch(
+        //   postsActions.updatePost(
+        //     postId,
+        //     formState.inputValues.title,
+        //     formState.inputValues.description,
+        //     formState.inputValues.imageUrl
+        //   )
+        // );
+      } else {
+        await dispatch(
+          postsActions.createPost(
+            formState.inputValues.title,
+            formState.inputValues.description,
+            formState.inputValues.imageUrl
+          )
+        );
+      }
+      props.navigation.goBack();
     } catch (err) {
       setError(err.message);
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   }, [dispatch, postId, formState]);
 
   useEffect(() => {

@@ -1,6 +1,5 @@
 const INTIAL_STATE = {
-    posts: [],
-    userPosts: []
+    posts: []
 }
 
 export default INTIAL_STATE;

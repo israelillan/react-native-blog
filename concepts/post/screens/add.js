@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
 import {
-  View,
-  Modal,
-  Text,
-  Button
+    View,
+    Text,
+    Button
 } from 'react-native';
 import { useSelector } from 'react-redux';
 
@@ -20,26 +19,26 @@ const AddPostScreen = props => {
 
     const loggedInAndEmailVerified = useSelector(state => state.user.loggedInAndEmailVerified);
 
-    return (<View style={{flex: 1}}>
-        <Modal
-            transparent={true}
-            visible={!loggedInAndEmailVerified}
-        >
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', margin: 20, backgroundColor: '#ccccccf0', borderRadius: 20 }}>
-                <View>
-                    <Text>
-                        To be able to post new content, we need you to log in or sign up
-                    </Text>
+    return (<View style={{ flex: 1 }}>
+        {
+            loggedInAndEmailVerified ? (
+                <EditPost {...props} postId={null} />
+            ) : (
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', margin: 20 }}>
+                    <View>
+                        <Text>
+                            To be able to post new content, we need you to log in or sign up
+                        </Text>
+                    </View>
+                    <View style={{ marginTop: 20 }}>
+                        <Button title='Login' onPress={() => props.navigation.navigate(navigationNames.AUTH)} />
+                    </View>
+                    <View style={{ marginTop: 20 }}>
+                        <Button title='Back' onPress={() => props.navigation.goBack()} />
+                    </View>
                 </View>
-                <View style={{marginTop: 20}}>
-                    <Button title='Login' onPress={() => props.navigation.navigate(navigationNames.AUTH)} />
-                </View>
-                <View style={{marginTop: 20}}>
-                    <Button title='Back' onPress={()=> props.navigation.goBack()} />
-                </View>
-            </View>
-        </Modal>
-        <EditPost {...props} postId={null} />
+            )
+        }
     </View>);
 };
 

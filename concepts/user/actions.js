@@ -1,4 +1,8 @@
-import { auth } from "../../backend/firebase";
+import { initializeAuth } from "firebase/auth";
+
+import store from "../../store";
+
+import firebaseApp from "../../backend/firebase";
 import { 
   onAuthStateChanged, 
   createUserWithEmailAndPassword, 
@@ -10,19 +14,17 @@ import {
 
 import * as names from './names'
 
-export const watchUser = () => {
-  return async dispatch => {
-    onAuthStateChanged(auth, (userData) => {
-      if (userData) {
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/firebase.User
-        dispatch({ type: names.USER_DATA, userData: userData });
-      } else {
-        dispatch({ type: names.LOGOUT });
-      }
-    });
+const auth = initializeAuth(firebaseApp, { /*persistence: getReactNativePersistence(AsyncStorage)*/ });
+
+onAuthStateChanged(auth, (userData) => {
+  if (userData) {
+    // User is signed in, see docs for a list of available properties
+    // https://firebase.google.com/docs/reference/js/firebase.User
+    store.dispatch({ type: names.USER_DATA, userData: userData });
+  } else {
+    store.dispatch({ type: names.LOGOUT });
   }
-}
+});
 
 export const signup = (email, password) => {
   return async dispatch => {

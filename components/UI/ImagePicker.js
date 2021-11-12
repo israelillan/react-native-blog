@@ -25,7 +25,6 @@ const PickedImage = props => {
             return;
         }
         const image = await ImagePicker.launchCameraAsync({
-            allowsEditing: true,
             quality: 0.8
         });
 

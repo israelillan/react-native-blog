@@ -5,12 +5,17 @@ import {
     Button,
     ActivityIndicator,
     StyleSheet,
-    TouchableOpacity
+    TouchableOpacity,
+    FlatList,
+    SafeAreaView,
+    Image
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
+import { MaterialIcons } from '@expo/vector-icons';
+
+import PostItem from '../components/postItem';
 
 import * as navigationNames from '../../../navigation/names';
-
 import * as actions from '../actions'
 
 const PostsListScreen = props => {
@@ -36,18 +41,7 @@ const PostsListScreen = props => {
             setError(err.message);
         }
         setIsRefreshing(false);
-    }, [dispatch, setIsLoading, setError]);
-
-    useEffect(() => {
-        // const willFocusSub = props.navigation.addListener(
-        //     'willFocus',
-        //     loadPosts
-        // );
-
-        // return () => {
-        //     willFocusSub.remove();
-        // };
-    }, [loadPosts]);
+    }, [dispatch, setIsRefreshing, setIsLoading, setError]);
 
     useEffect(() => {
         setIsLoading(true);
@@ -55,7 +49,6 @@ const PostsListScreen = props => {
             setIsLoading(false);
         });
     }, [dispatch, loadPosts]);
-
 
     if (error) {
         return (
@@ -81,21 +74,55 @@ const PostsListScreen = props => {
         return (
             <View style={styles.centered}>
                 <Text>No posts found.</Text>
-                <TouchableOpacity onPress={() => {
-                    props.navigation.navigate(navigationNames.ADD_POSTS);
-                }}>
-                    <Text style={{color: 'blue'}}>Maybe start adding some!</Text>
+                <TouchableOpacity onPress={() => props.navigation.navigate(navigationNames.ADD_POSTS)}>
+                    <Text style={{ color: 'blue' }}>Maybe start adding some!</Text>
                 </TouchableOpacity>
             </View>
         );
-    }
+    };
 
-    return <View>
-    </View>
+    return (
+        <SafeAreaView style={styles.container}>
+            <FlatList
+                onRefresh={loadPosts}
+                refreshing={isRefreshing}
+                data={posts}
+                keyExtractor={item => item.id}
+                renderItem={itemData => (
+                    <PostItem item={itemData.item} />
+                )}
+            />
+            <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => props.navigation.navigate(navigationNames.ADD_POSTS)}
+                style={styles.touchableOpacityStyle}>
+                <MaterialIcons
+                    name='add'
+                    size={50}
+                />
+            </TouchableOpacity>
+        </SafeAreaView>
+    );
 }
 
 const styles = StyleSheet.create({
-    centered: { flex: 1, justifyContent: 'center', alignItems: 'center' }
+    centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+    container: {
+        flex: 1,
+        backgroundColor: 'white',
+        padding: 10,
+    },
+    touchableOpacityStyle: {
+        position: 'absolute',
+        width: 50,
+        height: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+        right: 30,
+        bottom: 30,
+        backgroundColor: '#ccc',
+        borderRadius: 25,
+    }
 });
 
 export default PostsListScreen;

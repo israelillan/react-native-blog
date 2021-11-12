@@ -15,7 +15,7 @@ const AuthScreen = (props) => {
     });
   }, []);
 
-  const isLoggedIn = useSelector(state => state.user.loggedIn);
+  const loggedIn = useSelector(state => state.user.loggedIn);
   const loggedInAndEmailVerified = useSelector(state => state.user.loggedInAndEmailVerified);
 
   useEffect(() => {
@@ -25,7 +25,7 @@ const AuthScreen = (props) => {
   }, [loggedInAndEmailVerified]);
 
 
-  return isLoggedIn ? loggedInAndEmailVerified ? <View /> : <ConfirmEmail {...props} /> : <LoginOrSignUp {...props} />;
+  return loggedIn ? loggedInAndEmailVerified ? <View /> : <ConfirmEmail {...props} /> : <LoginOrSignUp {...props} />;
 };
 
 export default AuthScreen;

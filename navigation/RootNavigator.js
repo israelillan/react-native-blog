@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { NavigationContainer } from '@react-navigation/native';
@@ -18,14 +18,8 @@ import AuthScreen from '../concepts/user/screens/auth';
 import PostsListScreen from '../concepts/post/screens/list';
 import AddPostScreen from '../concepts/post/screens/add';
 
-const RootNavigator = ({navigation}) => {
+const RootNavigator = () => {
   const dispatch = useDispatch();
-  useEffect(() => {
-    async function asyncWatchUser() {
-      await dispatch(authActions.watchUser());
-    }
-    asyncWatchUser();
-  }, []);
 
   const loggedInAndEmailVerified = useSelector(state => state.user.loggedInAndEmailVerified);
   const navRef = useRef(null);
