@@ -174,7 +174,6 @@ const EditPost = props => {
               initialValue={editedPost ? editedPost.description : ''}
               initiallyValid={!!editedPost}
               required
-              minLength={5}
             />
           </KeyboardAvoidingView>
         </View>

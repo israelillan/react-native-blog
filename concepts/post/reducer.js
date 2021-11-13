@@ -21,7 +21,8 @@ export default (state = INTIAL_STATE, action) => {
                 updatedPosts[updatePostIndex] = action.post;
                 return {
                     ...state,
-                    posts: updatedPosts.sort(postCompareFn)
+                    posts: updatedPosts.sort(postCompareFn),
+                    selectedPost: state.selectedPost && state.selectedPost.id == action.post.id ? action.post : state.selectedPost
                 };
             };
             return state;
@@ -30,8 +31,14 @@ export default (state = INTIAL_STATE, action) => {
                 ...state,
                 posts: state.posts.filter(
                     p => p.id !== action.post.id
-                )
+                ),
+                selectedPost: state.selectedPost && state.selectedPost.id == action.post.id ? null : state.selectedPost
             };
+        case names.SELECT_POST:
+            return {
+                ...state,
+                selectedPost: action.post
+            }
         default:
             return state;
     }

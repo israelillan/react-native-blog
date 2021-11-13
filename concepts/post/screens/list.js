@@ -90,10 +90,9 @@ const PostsListScreen = props => {
                 keyExtractor={item => item.id}
                 renderItem={itemData => (
                     <PostItem item={itemData.item}
-                        onTouch={(item) => {
-                            props.navigation.navigate(navigationNames.VIEW_POST, {
-                                post: item
-                            });
+                        onTouch={async (item) => {
+                            dispatch(actions.selectPost(item));
+                            props.navigation.navigate(navigationNames.VIEW_POST);
                         }} />
                 )}
             />

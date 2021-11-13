@@ -25,12 +25,19 @@ const ViewScreen = props => {
         }
     }, [error]);
 
-    const { post } = props.route.params;
+    const post = useSelector(state =>
+        state.post.selectedPost
+    );
+
     useEffect(() => {
-        props.navigation.setOptions({
-            title: post.title
-        });
-    }, []);
+        if (post) {
+            props.navigation.setOptions({
+                title: post.title
+            });
+        } else {
+            props.navigation.dispatch(StackActions.pop(1));
+        }
+    }, [post]);
 
     const userId = useSelector(state => state.user.id);
 
@@ -42,14 +49,20 @@ const ViewScreen = props => {
 
         try {
             await dispatch(actions.deletePost(post));
-            props.navigation.dispatch(StackActions.pop(1));
         } catch (err) {
             setError(err.message);
             setIsLoading(false);
         }
     }, [dispatch, post, props.navigation]);
 
-    if (isLoading) {
+    useEffect(()=>{
+        const unsubscribe = props.navigation.addListener('beforeRemove', () => {
+            dispatch(actions.selectPost(null));
+        });
+        return unsubscribe;
+    }, [props.navigation]);
+
+    if (isLoading || !post) {
         return (
             <View>
                 <ActivityIndicator size="large" color="grey" />

@@ -10,24 +10,24 @@ const database = firebaseDatabase.getDatabase();
 const postsCollection = 'posts';
 const databasePostsRef = firebaseDatabase.ref(database, `${postsCollection}/`);
 
-firebaseDatabase.onChildAdded(databasePostsRef, (data) => {
-  store.dispatch({
+firebaseDatabase.onChildAdded(databasePostsRef, async (data) => {
+  await store.dispatch({
     type: names.ADD_POST, post: {
       ...data.val(),
       id: data.key,
     }
   });
 });
-firebaseDatabase.onChildChanged(databasePostsRef, (data) => {
-  store.dispatch({
+firebaseDatabase.onChildChanged(databasePostsRef, async (data) => {
+  await store.dispatch({
     type: names.UPDATE_POST, post: {
       ...data.val(),
       id: data.key,
     }
   });
 });
-firebaseDatabase.onChildRemoved(databasePostsRef, (data) => {
-  store.dispatch({
+firebaseDatabase.onChildRemoved(databasePostsRef, async (data) => {
+  await store.dispatch({
     type: names.DELETE_POST, post: {
       id: data.key,
     }
@@ -106,13 +106,15 @@ export const updatePost = (post, title, description, imageUrl) => {
     const { user } = getState();
 
     if (imageUrl.startsWith('file://')) {
+      //TODO: delete previous image
       imageUrl = await uploadImageToServer(imageUrl, user);
     }
 
     const updates = {
       [post.id]: {
+        ...post,
         title,
-        description, 
+        description,
         imageUrl,
         updateDate: firebaseDatabase.serverTimestamp()
       }
@@ -125,5 +127,12 @@ export const deletePost = (post) => {
   return async () => {
     const postRef = firebaseDatabase.ref(database, `posts/${post.id}`);
     await firebaseDatabase.remove(postRef);
+
+    //TODO: delete uploaded images
   };
 };
+
+export const selectPost = (post) => ({
+  type: names.SELECT_POST, 
+  post: post
+});

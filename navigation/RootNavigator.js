@@ -7,8 +7,8 @@ import { HeaderButtons, Item, HeaderButton } from 'react-navigation-header-butto
 import { MaterialIcons } from '@expo/vector-icons';
 
 import { LogBox } from 'react-native';
-// firebase sets up a long timer
-LogBox.ignoreLogs(['Setting a timer']);
+// firebase sets up a long timer and uses old AsyncStorage
+LogBox.ignoreLogs(['Setting a timer', 'AsyncStorage has been extracted']);
 
 import * as navigationNames from './names';
 
