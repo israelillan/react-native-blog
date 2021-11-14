@@ -1,16 +1,20 @@
 import * as names from './names';
 import INTIAL_STATE from './state';
 
-const postCompareFn = (a, b) => b.updateDate - a.updateDate;
-
 export default (state = INTIAL_STATE, action) => {
     switch (action.type) {
+        case names.SET_POSTS:
+            return {
+                ...state,
+                posts: action.posts,
+                selectedPost: null
+            };
         case names.ADD_POST:
             const newPostIndex = state.posts.findIndex(p => p.id === action.post.id);
             if (newPostIndex === -1) {
                 return {
                     ...state,
-                    posts: state.posts.concat(action.post).sort(postCompareFn)
+                    posts: [action.post].concat(state.posts)
                 };
             };
             return state;
@@ -18,10 +22,10 @@ export default (state = INTIAL_STATE, action) => {
             const updatePostIndex = state.posts.findIndex(p => p.id === action.post.id);
             if (updatePostIndex !== -1) {
                 const updatedPosts = [...state.posts];
-                updatedPosts[updatePostIndex] = action.post;
+                updatedPosts.splice(updatePostIndex, 1);
                 return {
                     ...state,
-                    posts: updatedPosts.sort(postCompareFn),
+                    posts: [action.post].concat(updatedPosts),
                     selectedPost: state.selectedPost && state.selectedPost.id == action.post.id ? action.post : state.selectedPost
                 };
             };

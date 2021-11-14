@@ -115,8 +115,8 @@ const ViewScreen = props => {
                     <View style={{ alignItems: 'flex-end' }}>
                         {post.creationDate !== post.updateDate ? (
                             <View>
-                                <Text>{`created: ${moment(post.creationDate).fromNow()}`}</Text>
-                                <Text>{`updated: ${moment(post.updateDate).fromNow()}`}</Text>
+                                <Text>{`created: ${moment.unix(post.creationDate.seconds).fromNow()}`}</Text>
+                                <Text>{`updated: ${moment.unix(post.updateDate.seconds).fromNow()}`}</Text>
                             </View>
                         ) : (
                             <View>

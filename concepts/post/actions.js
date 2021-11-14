@@ -1,42 +1,28 @@
 import * as firebaseStorage from "firebase/storage";
-import * as firebaseDatabase from "firebase/database";
+import * as firebaseDatabase from "firebase/firestore";
 import uuid from 'react-native-uuid';
 
 import store from '../../store';
 
 import * as names from './names';
 
-const database = firebaseDatabase.getDatabase();
-const postsCollection = 'posts';
-const databasePostsRef = firebaseDatabase.ref(database, `${postsCollection}/`);
-
-firebaseDatabase.onChildAdded(databasePostsRef, async (data) => {
-  await store.dispatch({
-    type: names.ADD_POST, post: {
-      ...data.val(),
-      id: data.key,
-    }
-  });
-});
-firebaseDatabase.onChildChanged(databasePostsRef, async (data) => {
-  await store.dispatch({
-    type: names.UPDATE_POST, post: {
-      ...data.val(),
-      id: data.key,
-    }
-  });
-});
-firebaseDatabase.onChildRemoved(databasePostsRef, async (data) => {
-  await store.dispatch({
-    type: names.DELETE_POST, post: {
-      id: data.key,
-    }
-  });
-});
+const database = firebaseDatabase.getFirestore();
+const postsCollectionName = 'posts';
+const postsCollectionReference = firebaseDatabase.collection(database, postsCollectionName);
 
 export const fetchPosts = () => {
   return async () => {
-    firebaseDatabase.query(databasePostsRef, firebaseDatabase.orderByChild('updateDate'));
+    const data = await firebaseDatabase.getDocs(firebaseDatabase.query(postsCollectionReference, firebaseDatabase.orderBy('updateDate', 'desc')));
+    const posts = [];
+    data.forEach((v) => {
+      posts.push({
+        ...v.data(),
+        id: v.id
+      });
+    });
+    await store.dispatch({
+      type: names.SET_POSTS, posts: posts
+    });
   };
 };
 
@@ -73,66 +59,95 @@ const uploadImageToServer = async (imageUrl, user) => {
   const imageFilename = getFilenameFromUrl(imageUrl);
   const imageExtension = getExtensionFromFilename(imageFilename);
 
-  const imageRef = firebaseStorage.ref(storage, `uploads/${user.id}/${uuid.v4()}.${imageExtension}`);
+  const imageName = `uploads/${user.id}/${uuid.v4()}.${imageExtension}`;
+  const imageRef = firebaseStorage.ref(storage, imageName);
   await firebaseStorage.uploadBytes(imageRef, imageBlob, {
     contentType: `image/${imageExtension}`
   });
-  return await firebaseStorage.getDownloadURL(imageRef);
+  return {
+    imageUrl: await firebaseStorage.getDownloadURL(imageRef),
+    imageName
+  };
 };
 
 export const createPost = (title, description, imageUrl) => {
   return async (_, getState) => {
     const { user } = getState();
 
-    const uploadedImageUrl = await uploadImageToServer(imageUrl, user);
+    const { imageUrl: uploadedImageUrl, imageName } = await uploadImageToServer(imageUrl, user);
 
     const post = {
       author: user.id,
       title,
       description,
       imageUrl: uploadedImageUrl,
+      imageName,
       creationDate: firebaseDatabase.serverTimestamp(),
       updateDate: firebaseDatabase.serverTimestamp()
     };
-    const id = await firebaseDatabase.push(databasePostsRef, post);
-    post.id = id;
-    post.creationDate = Date.now();
-    post.updateDate = Date.now();
+
+    const docRef = await firebaseDatabase.addDoc(postsCollectionReference, post);
+    post.id = docRef.id;
+    post.creationDate = {
+      seconds: Date.now() / 1000
+    };
+    post.updateDate = {
+      seconds: Date.now() / 1000
+    };
+
+    await store.dispatch({
+      type: names.ADD_POST, post
+    });
   };
 };
 
 export const updatePost = (post, title, description, imageUrl) => {
-  return async (_, getState) => {
+  return async (dispatch, getState) => {
     const { user } = getState();
 
+    let imageName = post.imageName;
     if (imageUrl.startsWith('file://')) {
-      //TODO: delete previous image
-      imageUrl = await uploadImageToServer(imageUrl, user);
+      const imageRef = firebaseStorage.ref(storage, post.imageName);
+      await firebaseStorage.deleteObject(imageRef);
+
+      imageUrl, imageName = await uploadImageToServer(imageUrl, user);
     }
 
-    const updates = {
-      [post.id]: {
-        ...post,
-        title,
-        description,
-        imageUrl,
-        updateDate: firebaseDatabase.serverTimestamp()
-      }
-    }
-    await firebaseDatabase.update(databasePostsRef, updates);
+    const updatedPost = {
+      ...post,
+      title,
+      description,
+      imageUrl,
+      imageName,
+      updateDate: firebaseDatabase.serverTimestamp()
+    };
+    const postDoc = firebaseDatabase.doc(database, `${postsCollectionName}/${post.id}`);
+    await firebaseDatabase.updateDoc(postDoc, updatedPost);
+
+    updatedPost.updateDate = {
+      seconds: Date.now() / 1000
+    };
+    await dispatch({
+      type: names.UPDATE_POST, post: updatedPost
+    });
   };
 };
 
 export const deletePost = (post) => {
-  return async () => {
-    const postRef = firebaseDatabase.ref(database, `posts/${post.id}`);
-    await firebaseDatabase.remove(postRef);
+  return async (dispatch) => {
+    const postDoc = firebaseDatabase.doc(database, `${postsCollectionName}/${post.id}`);
+    await firebaseDatabase.deleteDoc(postDoc, post);
 
-    //TODO: delete uploaded images
+    const imageRef = firebaseStorage.ref(storage, post.imageName);
+    await firebaseStorage.deleteObject(imageRef);
+
+    await dispatch({
+      type: names.DELETE_POST, post
+    });
   };
 };
 
 export const selectPost = (post) => ({
-  type: names.SELECT_POST, 
+  type: names.SELECT_POST,
   post: post
 });

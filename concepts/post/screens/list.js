@@ -72,12 +72,12 @@ const PostsListScreen = props => {
 
     if (!isLoading && posts.length === 0) {
         return (
-            <View style={styles.centered}>
+            <SafeAreaView style={styles.centered}>
                 <Text>No posts found.</Text>
                 <TouchableOpacity onPress={() => props.navigation.navigate(navigationNames.ADD_POST)}>
                     <Text style={{ color: 'blue' }}>Maybe start adding some!</Text>
                 </TouchableOpacity>
-            </View>
+            </SafeAreaView>
         );
     };
 
