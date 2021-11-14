@@ -6,12 +6,13 @@ import {
   KeyboardAvoidingView,
   ActivityIndicator
 } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { HeaderButtons, Item, HeaderButton } from 'react-navigation-header-buttons';
 import { MaterialIcons } from '@expo/vector-icons';
 
 import PickedImage from '../../../components/UI/ImagePicker';
-import Input from '../../../components/UI/input';
+import Input from '../../../components/UI/Input';
+import { required } from '../../../components/UI/inputValidators';
 
 import * as postsActions from '../actions';
 
@@ -58,7 +59,7 @@ const EditPost = props => {
       imageUrl: editedPost ? true : false,
       description: editedPost ? true : false
     },
-    formIsValid: editedPost ? true : false
+    formIsValid: editedPost ? true : false,
   });
 
   const inputChangeHandler = useCallback(
@@ -153,8 +154,7 @@ const EditPost = props => {
               returnKeyType="next"
               onInputChange={inputChangeHandler}
               initialValue={editedPost ? editedPost.title : ''}
-              initiallyValid={!!editedPost}
-              required
+              validators={[{ fn: required(), error: "Please enter your email." }]}
             />
           </KeyboardAvoidingView>
           <KeyboardAvoidingView
@@ -172,8 +172,7 @@ const EditPost = props => {
               numberOfLines={3}
               onInputChange={inputChangeHandler}
               initialValue={editedPost ? editedPost.description : ''}
-              initiallyValid={!!editedPost}
-              required
+              validators={[{ fn: required(), error: "Please enter your email." }]}
             />
           </KeyboardAvoidingView>
         </View>

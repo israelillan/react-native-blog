@@ -9,7 +9,8 @@ import {
 } from "react-native";
 import { useDispatch } from 'react-redux';
 
-import Input from "../../../components/UI/input";
+import Input from "../../../components/UI/Input";
+import { required, email, minLength } from '../../../components/UI/inputValidators';
 
 import * as authActions from '../actions';
 
@@ -99,10 +100,10 @@ const Signup = props => {
                     id="email"
                     label="E-Mail"
                     keyboardType="email-address"
-                    required
-                    email
+                    validators={[
+                        { fn: required(), error: "Please enter your email." },
+                        { fn: email(), error: "Please enter a valid email address." }]}
                     autoCapitalize="none"
-                    errorText="Please enter a valid email address."
                     onInputChange={inputChangeHandler}
                     initialValue=""
                 />
@@ -111,8 +112,9 @@ const Signup = props => {
                     label="Password"
                     keyboardType="default"
                     secureTextEntry
-                    required
-                    minLength={6}
+                    validators={[
+                        { fn: required(), error: "Please enter a valid password." },
+                        { fn: minLength(6), error: "Your password should be longer than 6 characters." }]}
                     autoCapitalize="none"
                     errorText="Please enter a valid password."
                     onInputChange={inputChangeHandler}

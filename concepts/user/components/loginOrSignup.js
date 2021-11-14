@@ -12,7 +12,8 @@ import { useDispatch } from 'react-redux';
 
 import * as authActions from '../actions';
 
-import Input from '../../../components/UI/input';
+import Input from '../../../components/UI/Input';
+import { required, email } from '../../../components/UI/inputValidators';
 
 import Signup from './signup';
 import Login from './login';
@@ -60,10 +61,10 @@ const LoginOrSignUp = props => {
                                     id="email"
                                     label="E-Mail"
                                     keyboardType="email-address"
-                                    required
-                                    email
+                                    validators={[
+                                        { fn: required(), error: "Please enter your email." },
+                                        { fn: email(), error: "Please enter a valid email address." }]}
                                     autoCapitalize="none"
-                                    errorText="Please enter a valid email address."
                                     onInputChange={(_, inputValue, inputValidity) => {
                                         setResetPasswordEmail(inputValue);
                                         setResetPasswordEmailValid(inputValidity);

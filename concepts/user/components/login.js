@@ -6,38 +6,32 @@ import {
     Button,
     ActivityIndicator,
     Alert,
-    Pressable,
-    Text
 } from "react-native";
 import { useDispatch } from 'react-redux';
 
 import * as authActions from '../actions';
 
-import Input from "../../../components/UI/input";
-
-const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE';
+import Input from "../../../components/UI/Input";
+import { required, email, minLength } from '../../../components/UI/inputValidators';
 
 const formReducer = (state, action) => {
-    if (action.type === FORM_INPUT_UPDATE) {
-        const updatedValues = {
-            ...state.inputValues,
-            [action.input]: action.value
-        };
-        const updatedValidities = {
-            ...state.inputValidities,
-            [action.input]: action.isValid
-        };
-        let updatedFormIsValid = true;
-        for (const key in updatedValidities) {
-            updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
-        }
-        return {
-            formIsValid: updatedFormIsValid,
-            inputValidities: updatedValidities,
-            inputValues: updatedValues
-        };
+    const updatedValues = {
+        ...state.inputValues,
+        [action.input]: action.value
+    };
+    const updatedValidities = {
+        ...state.inputValidities,
+        [action.input]: action.isValid
+    };
+    let updatedFormIsValid = true;
+    for (const key in updatedValidities) {
+        updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
     }
-    return state;
+    return {
+        formIsValid: updatedFormIsValid,
+        inputValidities: updatedValidities,
+        inputValues: updatedValues
+    };
 };
 
 const Login = props => {
@@ -87,7 +81,6 @@ const Login = props => {
     const inputChangeHandler = useCallback(
         (inputIdentifier, inputValue, inputValidity) => {
             dispatchFormState({
-                type: FORM_INPUT_UPDATE,
                 value: inputValue,
                 isValid: inputValidity,
                 input: inputIdentifier
@@ -105,10 +98,10 @@ const Login = props => {
                     id="email"
                     label="E-Mail"
                     keyboardType="email-address"
-                    required
-                    email
+                    validators={[
+                        { fn: required(), error: "Please enter your email." },
+                        { fn: email(), error: "Please enter a valid email address." }]}
                     autoCapitalize="none"
-                    errorText="Please enter a valid email address."
                     onInputChange={inputChangeHandler}
                     initialValue=""
                 />
@@ -117,10 +110,10 @@ const Login = props => {
                     label="Password"
                     keyboardType="default"
                     secureTextEntry
-                    required
-                    minLength={5}
+                    validators={[
+                        { fn: required(), error: "Please enter a valid password." },
+                        { fn: minLength(6), error: "Your password should be longer than 6 characters." }]}
                     autoCapitalize="none"
-                    errorText="Please enter a valid password."
                     onInputChange={inputChangeHandler}
                     initialValue=""
                 />
@@ -131,6 +124,7 @@ const Login = props => {
                         <Button
                             title='Login'
                             onPress={authHandler}
+                            color={formState.formIsValid ? '' : 'grey'}
                         />
                     )}
                 </View>
