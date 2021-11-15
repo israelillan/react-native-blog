@@ -15,7 +15,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 import PostItem from '../components/postItem';
 
-import * as navigationNames from '../../../navigation/names';
+import * as paths from '../../../navigation/paths';
 import * as actions from '../actions'
 
 const PostsListScreen = props => {
@@ -74,7 +74,7 @@ const PostsListScreen = props => {
         return (
             <SafeAreaView style={styles.centered}>
                 <Text>No posts found.</Text>
-                <TouchableOpacity onPress={() => props.navigation.navigate(navigationNames.ADD_POST)}>
+                <TouchableOpacity onPress={() => props.navigation.navigate(paths.ADD_POST)}>
                     <Text style={{ color: 'blue' }}>Maybe start adding some!</Text>
                 </TouchableOpacity>
             </SafeAreaView>
@@ -92,13 +92,13 @@ const PostsListScreen = props => {
                     <PostItem item={itemData.item}
                         onTouch={async (item) => {
                             dispatch(actions.selectPost(item));
-                            props.navigation.navigate(navigationNames.VIEW_POST);
+                            props.navigation.navigate(paths.VIEW_POST);
                         }} />
                 )}
             />
             <TouchableOpacity
                 activeOpacity={0.7}
-                onPress={() => props.navigation.navigate(navigationNames.ADD_POST)}
+                onPress={() => props.navigation.navigate(paths.ADD_POST)}
                 style={styles.touchableOpacityStyle}>
                 <MaterialIcons
                     name='add'

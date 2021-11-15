@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 
 import EditPost from '../components/editPost';
 
-import * as navigationNames from '../../../navigation/names';
+import * as paths from '../../../navigation/paths';
 
 const AddPostScreen = props => {
     useEffect(() => {
@@ -31,7 +31,7 @@ const AddPostScreen = props => {
                         </Text>
                     </View>
                     <View style={{ marginTop: 20 }}>
-                        <Button title='Login' onPress={() => props.navigation.navigate(navigationNames.AUTH)} />
+                        <Button title='Login' onPress={() => props.navigation.navigate(paths.AUTH)} />
                     </View>
                     <View style={{ marginTop: 20 }}>
                         <Button title='Back' onPress={() => props.navigation.goBack()} />

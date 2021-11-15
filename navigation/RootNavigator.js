@@ -1,16 +1,17 @@
-import React, { useRef } from 'react';
-
+import React, { useEffect, useCallback, useRef } from 'react';
+import { Text } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { HeaderButtons, Item, HeaderButton } from 'react-navigation-header-buttons';
 import { MaterialIcons } from '@expo/vector-icons';
+import * as Linking from 'expo-linking';
 
 import { LogBox } from 'react-native';
 // firebase sets up a long timer and uses old AsyncStorage
 LogBox.ignoreLogs(['Setting a timer', 'AsyncStorage has been extracted']);
 
-import * as navigationNames from './names';
+import * as paths from './paths';
 
 import * as authActions from '../concepts/user/actions';
 
@@ -24,11 +25,28 @@ const RootNavigator = () => {
   const dispatch = useDispatch();
 
   const loggedInAndEmailVerified = useSelector(state => state.user.loggedInAndEmailVerified);
-  const navRef = useRef(null);
+  const navRef = useNavigationContainerRef();
+
+  // Linking.getInitialURL().then((v) => {
+  //   if (v) {
+  //     linkHandler(v);
+  //   }
+  // });
 
   const Stack = createNativeStackNavigator();
+
+  const prefix = Linking.createURL('/');
+  const linking = {
+    prefixes: [prefix],
+    config: {
+      screens: {
+        [paths.VIEW_POST]: 'post/:postId'
+      }
+    }
+  };
+
   return (
-    <NavigationContainer ref={navRef}>
+    <NavigationContainer ref={navRef} linking={linking} fallback={<Text>Loading...</Text>}>
       <Stack.Navigator screenOptions={{
         headerRight: () => (
           <HeaderButtons HeaderButtonComponent={HeaderButton}>
@@ -40,18 +58,18 @@ const RootNavigator = () => {
                 if (loggedInAndEmailVerified) {
                   dispatch(authActions.logout());
                 } else {
-                  navRef.current.navigate(navigationNames.AUTH);
+                  navRef.current.navigate(paths.AUTH);
                 }
               }}
             />
           </HeaderButtons>
         )
       }}>
-        <Stack.Screen name={navigationNames.POSTS_LIST} component={PostsListScreen} />
-        <Stack.Screen name={navigationNames.ADD_POST} component={AddPostScreen} />
-        <Stack.Screen name={navigationNames.VIEW_POST} component={ViewPostScreen} />
-        <Stack.Screen name={navigationNames.EDIT_POST} component={EditPostScreen} />
-        <Stack.Screen name={navigationNames.AUTH} component={AuthScreen} />
+        <Stack.Screen name={paths.POSTS_LIST} component={PostsListScreen} />
+        <Stack.Screen name={paths.ADD_POST} component={AddPostScreen} />
+        <Stack.Screen name={paths.VIEW_POST} component={ViewPostScreen} />
+        <Stack.Screen name={paths.EDIT_POST} component={EditPostScreen} />
+        <Stack.Screen name={paths.AUTH} component={AuthScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -14,8 +14,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { StackActions } from '@react-navigation/native';
 
 import * as actions from '../actions';
-import * as navigationNames from '../../../navigation/names';
+import * as paths from '../../../navigation/paths';
 import { sharePost } from '../share';
+
 
 const ViewScreen = props => {
     const [isLoading, setIsLoading] = useState(false);
@@ -26,9 +27,16 @@ const ViewScreen = props => {
         }
     }, [error]);
 
+    const dispatch = useDispatch();
+
     const post = useSelector(state =>
         state.post.selectedPost
     );
+    useEffect(() => {
+        if (props.route.params && props.route.params.postId) {
+            dispatch(actions.selectPost(props.route.params.postId));
+        }
+    }, [props.route.params])
 
     useEffect(() => {
         if (post) {
@@ -36,14 +44,13 @@ const ViewScreen = props => {
                 title: post.title
             });
         } else {
-            props.navigation.dispatch(StackActions.pop(1));
+            if (!props.route.params || !props.route.params.postId) {
+                props.navigation.dispatch(StackActions.pop(1));
+            }
         }
     }, [post]);
 
     const userId = useSelector(state => state.user.id);
-
-    const dispatch = useDispatch();
-
     const deleteHandler = useCallback(async () => {
         setError(null);
         setIsLoading(true);
@@ -74,7 +81,7 @@ const ViewScreen = props => {
     const UserControls = !!userId && userId === post.author ? (
         <View style={{ flex: 1, alignItems: 'flex-end', justifyContent: 'space-between', padding: 10 }}>
             <TouchableOpacity onPress={() => {
-                props.navigation.navigate(navigationNames.EDIT_POST, {
+                props.navigation.navigate(paths.EDIT_POST, {
                     post
                 })
             }}>
