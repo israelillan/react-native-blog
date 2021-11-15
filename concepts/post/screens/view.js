@@ -28,7 +28,6 @@ const ViewScreen = props => {
     }, [error]);
 
     const dispatch = useDispatch();
-
     const post = useSelector(state =>
         state.post.selectedPost
     );
@@ -44,6 +43,10 @@ const ViewScreen = props => {
                 title: post.title
             });
         } else {
+            props.navigation.setOptions({
+                title: 'loading'
+            });
+
             if (!props.route.params || !props.route.params.postId) {
                 props.navigation.dispatch(StackActions.pop(1));
             }

@@ -48,7 +48,7 @@ const PostsListScreen = props => {
         loadPosts().then(() => {
             setIsLoading(false);
         });
-    }, [dispatch, loadPosts]);
+    }, [loadPosts]);
 
     if (error) {
         return (

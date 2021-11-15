@@ -1,5 +1,4 @@
-import React, { useEffect, useCallback, useRef } from 'react';
-import { Text } from 'react-native';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -27,18 +26,13 @@ const RootNavigator = () => {
   const loggedInAndEmailVerified = useSelector(state => state.user.loggedInAndEmailVerified);
   const navRef = useNavigationContainerRef();
 
-  // Linking.getInitialURL().then((v) => {
-  //   if (v) {
-  //     linkHandler(v);
-  //   }
-  // });
-
   const Stack = createNativeStackNavigator();
 
   const prefix = Linking.createURL('/');
   const linking = {
     prefixes: [prefix],
     config: {
+      initialRouteName: paths.POSTS_LIST,
       screens: {
         [paths.VIEW_POST]: 'post/:postId'
       }
@@ -46,7 +40,7 @@ const RootNavigator = () => {
   };
 
   return (
-    <NavigationContainer ref={navRef} linking={linking} fallback={<Text>Loading...</Text>}>
+    <NavigationContainer ref={navRef} linking={linking}>
       <Stack.Navigator screenOptions={{
         headerRight: () => (
           <HeaderButtons HeaderButtonComponent={HeaderButton}>
