@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 
 const Input = props => {
-  const { onInputChange, id, validators, label, initialValue } = props;
+  const { onInputChange, id, validators, label, initialValue, touched } = props;
 
-  const [isTouched, setIsTouched] = useState(false);
+  const [isTouched, setIsTouched] = useState(touched);
   const [value, setValue] = useState(initialValue ? initialValue : '');
   const [error, setError] = useState(null);
 
@@ -22,6 +22,10 @@ const Input = props => {
     setError(error);
     setValue(text);
   };
+
+  if (touched) {
+    changeTextHandler(value);
+  }
 
   useEffect(() => {
     let valid = true;

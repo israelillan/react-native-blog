@@ -64,16 +64,18 @@ const Login = props => {
     }, [error]);
 
     const authHandler = async () => {
-        setError(null);
-        setIsLoading(true);
-        try {
-            await dispatch(authActions.login(
-                formState.inputValues.email,
-                formState.inputValues.password
-            ));
-        } catch (err) {
-            setError(err.message);
-            setIsLoading(false);
+        if (formState.formIsValid) {
+            setError(null);
+            setIsLoading(true);
+            try {
+                await dispatch(authActions.login(
+                    formState.inputValues.email,
+                    formState.inputValues.password
+                ));
+            } catch (err) {
+                setError(err.message);
+                setIsLoading(false);
+            }
         }
     };
 

@@ -15,6 +15,7 @@ import { StackActions } from '@react-navigation/native';
 
 import * as actions from '../actions';
 import * as navigationNames from '../../../navigation/names';
+import { sharePost } from '../share';
 
 const ViewScreen = props => {
     const [isLoading, setIsLoading] = useState(false);
@@ -55,7 +56,7 @@ const ViewScreen = props => {
         }
     }, [dispatch, post, props.navigation]);
 
-    useEffect(()=>{
+    useEffect(() => {
         const unsubscribe = props.navigation.addListener('beforeRemove', () => {
             dispatch(actions.selectPost(null));
         });
@@ -112,18 +113,35 @@ const ViewScreen = props => {
                     <ImageBackground style={{ height: 300 }} source={{ uri: post.imageUrl }}>
                         {UserControls}
                     </ImageBackground>
-                    <View style={{ alignItems: 'flex-end' }}>
-                        {post.creationDate !== post.updateDate ? (
-                            <View>
-                                <Text>{`created: ${moment.unix(post.creationDate.seconds).fromNow()}`}</Text>
-                                <Text>{`updated: ${moment.unix(post.updateDate.seconds).fromNow()}`}</Text>
-                            </View>
-                        ) : (
-                            <View>
-                                <Text>{`created: ${moment(post.creationDate).fromNow()}`}</Text>
-                            </View>
-                        )
-                        }
+                    <View style={{ flexDirection: 'row', alignItems: 'stretch', justifyContent: 'space-between', padding: 5 }}>
+                        <View>
+                            <TouchableOpacity onPress={async () => {
+                                try {
+                                    sharePost(post);
+                                } catch (error) {
+                                    alert(error.message);
+                                }
+                            }}>
+                                <MaterialIcons
+                                    name='share'
+                                    size={40}
+                                    color='white'
+                                />
+                            </TouchableOpacity>
+                        </View>
+                        <View>
+                            {post.creationDate !== post.updateDate ? (
+                                <View>
+                                    <Text>{`created: ${moment.unix(post.creationDate.seconds).fromNow()}`}</Text>
+                                    <Text>{`updated: ${moment.unix(post.updateDate.seconds).fromNow()}`}</Text>
+                                </View>
+                            ) : (
+                                <View>
+                                    <Text>{`created: ${moment(post.creationDate).fromNow()}`}</Text>
+                                </View>
+                            )
+                            }
+                        </View>
                     </View>
                     <Text style={{ margin: 20, backgroundColor: '#ccc', minHeight: 200 }}>{post.description}</Text>
                 </View>

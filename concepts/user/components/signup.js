@@ -127,6 +127,7 @@ const Signup = props => {
                         <Button
                             title='Sign up'
                             onPress={authHandler}
+                            color={formState.formIsValid ? '' : 'grey'}
                         />
                     )}
                 </View>

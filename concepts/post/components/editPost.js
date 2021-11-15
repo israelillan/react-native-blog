@@ -117,6 +117,7 @@ const EditPost = props => {
             IconComponent={MaterialIcons}
             iconSize={23}
             onPress={submitHandler}
+            color={formState.formIsValid ? '' : 'grey'}
           />
         </HeaderButtons>
       )
