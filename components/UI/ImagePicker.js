@@ -28,8 +28,10 @@ const PickedImage = props => {
             quality: 0.8
         });
 
-        setPickedImage(image.uri);
-        props.onImageTaken(image.uri);
+        if (!image.cancelled) {
+            setPickedImage(image.uri);
+            props.onImageTaken(image.uri);
+        }
     };
     const pickImageHandler = async () => {
         const hasPermission = await verifyPermissions();
@@ -41,8 +43,10 @@ const PickedImage = props => {
             quality: 0.8
         });
 
-        setPickedImage(image.uri);
-        props.onImageTaken(image.uri);
+        if (!image.cancelled) {
+            setPickedImage(image.uri);
+            props.onImageTaken(image.uri);
+        }
     };
 
     return (
@@ -54,7 +58,7 @@ const PickedImage = props => {
                         onPress={takeImageHandler}
                     />
                 </View>
-                <View style={{marginTop: 10}}>
+                <View style={{ marginTop: 10 }}>
                     <Button
                         title="Choose from gallery"
                         onPress={pickImageHandler}

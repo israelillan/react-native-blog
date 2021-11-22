@@ -113,9 +113,11 @@ export const updatePost = (post, title, description, imageUrl) => {
     let imageName = post.imageName;
     if (imageUrl.startsWith('file://')) {
       const imageRef = firebaseStorage.ref(storage, post.imageName);
-      await firebaseStorage.deleteObject(imageRef);
+      try {
+        await firebaseStorage.deleteObject(imageRef);
+      } catch { }
 
-      imageUrl, imageName = await uploadImageToServer(imageUrl, user);
+      ({ imageUrl, imageName } = await uploadImageToServer(imageUrl, user));
     }
 
     const updatedPost = {
@@ -163,7 +165,7 @@ export const selectPost = (post) => {
     } else {
       const state = getState();
       let posts = state.post.posts;
-      if(!posts || posts.length == 0) {
+      if (!posts || posts.length == 0) {
         posts = await getPosts();
       }
       const selectedPost = posts.find(p => p.id === post);
